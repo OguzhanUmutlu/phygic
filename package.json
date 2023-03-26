@@ -1,0 +1,18 @@
+{
+  "name": "phygic",
+  "version": "1.0.0",
+  "description": "Phygic - 2D Physics Engine",
+  "main": "dist/phygic.min.js",
+  "keywords": [
+    "phygic",
+    "physics",
+    "engine",
+    "2d",
+    "js",
+    "web",
+    "realtime",
+    "renderer"
+  ],
+  "author": "OguzhanUmutlu",
+  "license": "MIT"
+}

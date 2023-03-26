@@ -1,0 +1,67 @@
+<canvas></canvas>
+<script src="../src/Animator.js"></script>
+<script src="../src/Model.js"></script>
+<script src="../src/Object.js"></script>
+<script src="../src/Engine.js"></script>
+<script src="../src/Resizer.js"></script>
+<script src="../src/Mouse.js"></script>
+<script src="../src/Keyboard.js"></script>
+<script src="../src/models/Circle.js"></script>
+<script src="../src/models/Path.js"></script>
+<script src="../src/models/Polygon.js"></script>
+<script src="../src/models/Rectangle.js"></script>
+<script>
+    // TODO: rendering: x, y, rotation              shapes: polygons, circles, paths
+    // TODO: update system with delta tick
+    // TODO: objects with: x, y, velocity, angularVelocity, rotation
+    // TODO: cache stuff like cosines, sines and tangents
+    // TODO: angular velocity, ground friction, air friction, gravity, explosions, bouncing(inelastic), elastic intersection
+    // TODO: sticking intersection, polygon collision system, rope tension, ground force, balance, machines, coil spring
+    // TODO: make it so you can use pure html to create objects and engines etc.
+
+    // TODO: in future make a 3d version as well
+
+
+    const canvas = document.querySelector("canvas");
+
+    const engine = new PhygicEngine({
+        canvas, mouseEvents: true, keyboardEvents: true, resizeCanvas: true
+    });
+
+    const myObject = new PhygicObject(engine, {
+        x: 100, y: -100, model: new PhygicRectangle, mass: 10
+    });
+
+    const myObject2 = new PhygicObject(engine, {
+        x: 300, y: -415, model: new PhygicRectangle({height: 5, width: 300}), rotation: PI / 6, isStatic: true
+    });
+
+    const ground = new PhygicObject(engine, {
+        x: 100, y: -500, isStatic: true, model: new PhygicRectangle({width: 10020})
+    });
+
+    engine.addEventListener("update", () => {
+        if (engine.keyboard.isPressing("d")) myObject.move(1, 0);
+        if (engine.keyboard.isPressing("a")) myObject.move(-1, 0);
+        if ((engine.keyboard.isPressing(" ") || engine.keyboard.isPressing("w")) && myObject.isOnGround()) myObject.velocity.y = 3;
+        if (engine.keyboard.isPressing("s")) myObject.velocity.y -= 0.1;
+    });
+
+    engine.addEventListener("render", () => {
+        engine.renderOptions.translation.x = myObject.x - canvas.width / 2;
+        engine.renderOptions.translation.y = myObject.y + canvas.height / 2;
+    });
+
+    engine.addEventListener("afterRender", () => {
+        engine.ctx.font = "30px Calibri";
+        if (engine.mouseManager) engine.ctx.fillText(engine.mouse.x.toFixed(2) + " " + engine.mouse.y.toFixed(2), 16, 30);
+    });
+
+    addEventListener("dblclick", () => {
+        myObject.x = engine.mouse.x;
+        myObject.y = engine.mouse.y;
+        const vector = myObject.getDirectionVectorTo(engine.mouse.x, engine.mouse.y);
+        myObject.velocity.x += vector.x * 2;
+        myObject.velocity.y += vector.y * 2;
+    });
+</script>
